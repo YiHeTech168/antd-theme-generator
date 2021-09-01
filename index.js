@@ -304,17 +304,13 @@ async function compileAllLessFilesToCss(
   stylesDir,
   antdStylesDir,
   varMap = {},
-  varPath
+  varPath,
+	styles
 ) {
   /*
     Get all less files path in styles directory
     and then compile all to css and join
   */
-  const stylesDirs = [].concat(stylesDir);
-  let styles = [];
-  stylesDirs.forEach((s) => {
-    styles = styles.concat(glob.sync(path.join(s, "./**/*.less")));
-  });
   const csss = await Promise.all(
     styles.map((filePath) => {
       let fileContent = fs.readFileSync(filePath).toString();
@@ -395,6 +391,7 @@ async function generateTheme({
   outputFilePath,
   themeVariables = ["@primary-color"],
   customColorRegexArray = [],
+	styles,
 }) {
   try {
     const antdPath = antdStylesDir || path.join(antDir, "lib");
@@ -405,12 +402,6 @@ async function generateTheme({
     /*
       stylesDir can be array or string
     */
-    const stylesDirs = [].concat(stylesDir);
-    let styles = [];
-    stylesDirs.forEach((s) => {
-      styles = styles.concat(glob.sync(path.join(s, "./**/*.less")));
-    });
-
     const antdStylesFile = path.join(antDir, "./dist/antd.less"); // path.join(antdPath, './style/index.less');
 
     /*
@@ -522,7 +513,8 @@ async function generateTheme({
       stylesDir,
       antdStylesDir,
       themeCompiledVars,
-      varFile
+      varFile,
+			styles,
     );
     let fadeMap = {};
     const fades = antdLess.match(/fade\(.*\)/g);
@@ -744,6 +736,7 @@ to
 // });
 
 function combineLess(filePath, nodeModulesPath) {
+	console.log(filePath);
   const fileContent = fs.readFileSync(filePath).toString();
   const directory = path.dirname(filePath);
   return fileContent
