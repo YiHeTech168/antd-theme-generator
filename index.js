@@ -11,6 +11,8 @@ const stripCssComments = require("strip-css-comments");
 let hashCache = "";
 let cssCache = "";
 
+const genLogs = false;
+
 const COLOR_FUNCTIONS = [
   "color",
   "lighten",
@@ -393,6 +395,12 @@ async function generateTheme({
   customColorRegexArray = [],
 	styles,
 }) {
+	if (genLogs) {
+		fs.writeFileSync(
+			path.join(process.cwd(), `./generateTheme_styles.json`),
+			JSON.stringify(styles),
+		);
+	}
   try {
     const antdPath = antdStylesDir || path.join(antDir, "lib");
     const nodeModulesPath = path.join(
@@ -516,6 +524,12 @@ async function generateTheme({
       varFile,
 			styles,
     );
+		if (genLogs) {
+			fs.writeFileSync(
+				path.join(process.cwd(), `./userCustomCss.txt`),
+				userCustomCss,
+			);
+		}
     let fadeMap = {};
     const fades = antdLess.match(/fade\(.*\)/g);
     if (fades) {
@@ -556,6 +570,12 @@ async function generateTheme({
     antdLess = `${antdLess}\n${varsCombined}`;
     const { css: antCss } = await render(antdLess, [antdPath, antdStylesDir]);
     const allCss = `${antCss}\n${userCustomCss}`;
+		if (genLogs) {
+			fs.writeFileSync(
+				path.join(process.cwd(), `./logs/allCss.txt`),
+				allCss,
+			);
+		}
     results = await postcss([reducePlugin]).process(allCss, {
       from: antdStylesFile,
     });
