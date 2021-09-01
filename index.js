@@ -736,7 +736,6 @@ to
 // });
 
 function combineLess(filePath, nodeModulesPath) {
-	console.log(filePath);
   const fileContent = fs.readFileSync(filePath).toString();
   const directory = path.dirname(filePath);
   return fileContent
